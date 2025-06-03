@@ -108,3 +108,14 @@ main {
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     outline: none;
 }
+
+.quote-image {
+    display: block; /* Allows margin auto to work for centering */
+    max-width: 100%; /* Responsive, ensures it doesn't overflow container */
+    height: auto; /* Maintain aspect ratio */
+    margin: 0 auto 15px auto; /* Center block image, 15px margin below */
+    border-radius: 4px; /* Slightly rounded corners */
+    /* Optional: Add a subtle border or shadow if desired */
+    /* border: 1px solid #eee; */
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+}

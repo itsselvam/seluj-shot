@@ -20,6 +20,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const quoteDiv = document.createElement('div');
             quoteDiv.className = 'quote-item';
 
+            // Add image if available
+            if (quote.image_url) {
+                const imgElement = document.createElement('img');
+                imgElement.src = quote.image_url;
+                // Generate alt text from the first few words of the quote
+                const altTextContent = quote.text.split(' ').slice(0, 7).join(' ');
+                imgElement.alt = `Image related to quote: ${altTextContent}...`;
+                imgElement.className = 'quote-image';
+                quoteDiv.appendChild(imgElement); // Prepend by appending first, or use insertBefore
+            }
+
             const quoteText = document.createElement('blockquote');
             quoteText.className = 'quote-text';
             quoteText.textContent = `“${quote.text}”`;
@@ -28,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             quoteAuthor.className = 'quote-author';
             quoteAuthor.textContent = `— ${quote.author}`;
 
+            // Append text and author after the image (if any)
             quoteDiv.appendChild(quoteText);
             quoteDiv.appendChild(quoteAuthor);
             quotesContainer.appendChild(quoteDiv);
