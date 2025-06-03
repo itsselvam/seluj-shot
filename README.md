@@ -9,6 +9,8 @@ This application scrapes quotes from [quotes.toscrape.com](http://quotes.toscrap
 - Web interface to view quotes.
 - Basic responsive design.
 - Unit tests for backend.
+- Refresh Button: Allows manually re-fetching and updating the displayed quotes.
+- Client-Side Search: Filter quotes in real-time by typing keywords for quote text or author.
 
 ## Setup and Installation
 
@@ -34,6 +36,7 @@ This application scrapes quotes from [quotes.toscrape.com](http://quotes.toscrap
 
 2.  **View Frontend:**
     Open `frontend/index.html` in a browser (backend must be running).
+    Once loaded, you can use the "Refresh Quotes" button to fetch a new set of quotes, or use the search bar to filter the currently displayed quotes by text or author.
 
 ## Running Tests
 From project root:
