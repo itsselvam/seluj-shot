@@ -1,64 +1,123 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const quotesContainer = document.getElementById('quotes-container');
+    const refreshButton = document.getElementById('refresh-button');
+    const searchInput = document.getElementById('search-input');
+    const originalButtonText = refreshButton.textContent;
 
+    let allQuotes = []; // To store all fetched quotes
+
+    // Function to render quotes to the DOM
+    function renderQuotes(quotesToRender) {
+        // Clear previous quotes or messages
+        quotesContainer.innerHTML = '';
+
+        if (!quotesToRender || quotesToRender.length === 0) {
+            quotesContainer.innerHTML = '<p>No quotes match your search or none available.</p>';
+            return;
+        }
+
+        quotesToRender.forEach(quote => {
+            const quoteDiv = document.createElement('div');
+            quoteDiv.className = 'quote-item';
+
+            // Add image if available
+            if (quote.image_url) {
+                const imgElement = document.createElement('img');
+                imgElement.src = quote.image_url;
+                // Generate alt text from the first few words of the quote
+                const altTextContent = quote.text.split(' ').slice(0, 7).join(' ');
+                imgElement.alt = `Image related to quote: ${altTextContent}...`;
+                imgElement.className = 'quote-image';
+                quoteDiv.appendChild(imgElement); // Prepend by appending first, or use insertBefore
+            }
+
+            const quoteText = document.createElement('blockquote');
+            quoteText.className = 'quote-text';
+            quoteText.textContent = `“${quote.text}”`;
+
+            const quoteAuthor = document.createElement('p');
+            quoteAuthor.className = 'quote-author';
+            quoteAuthor.textContent = `— ${quote.author}`;
+
+            // Append text and author after the image (if any)
+            quoteDiv.appendChild(quoteText);
+            quoteDiv.appendChild(quoteAuthor);
+            quotesContainer.appendChild(quoteDiv);
+        });
+    }
+
+    // Function to fetch quotes from the API
     async function fetchQuotes() {
+        if (refreshButton) {
+            refreshButton.disabled = true;
+            refreshButton.textContent = 'Loading...';
+        }
+        if (searchInput) {
+            searchInput.value = ''; // Clear search input on refresh
+        }
+        // Display loading message while fetching
+        quotesContainer.innerHTML = '<p>Loading quotes...</p>';
+
         try {
-            // Assuming the backend API is available at '/api/quotes' on the same host.
-            // If running frontend separately from backend (e.g. live server vs python flask server)
-            // you might need the full URL: 'http://localhost:5000/api/quotes'
             const response = await fetch('/api/quotes');
 
             if (!response.ok) {
-                // Try to get error message from response body if available
                 let errorMsg = `Error fetching quotes: ${response.status} ${response.statusText}`;
                 try {
                     const errorData = await response.json();
                     if (errorData && errorData.error) {
                         errorMsg = `Error fetching quotes: ${errorData.error}`;
                     }
-                } catch (e) {
-                    // Could not parse error JSON, stick with status text
-                }
+                } catch (e) { /* Ignore if error data cannot be parsed */ }
                 throw new Error(errorMsg);
             }
 
-            const quotes = await response.json();
+            const fetchedQuotes = await response.json();
 
-            if (!quotes || quotes.length === 0) {
+            if (fetchedQuotes && fetchedQuotes.error) { // Handle API returning an error object
+                 allQuotes = []; // Reset allQuotes
+                 quotesContainer.innerHTML = `<p>Error: ${fetchedQuotes.error}</p>`;
+            } else if (!fetchedQuotes || !Array.isArray(fetchedQuotes) || fetchedQuotes.length === 0) {
+                allQuotes = []; // Reset allQuotes
                 quotesContainer.innerHTML = '<p>No quotes found or an error occurred retrieving them.</p>';
-                // Check if the response was actually an error object like {'error': 'message'}
-                // This case can happen if API returns 200 OK but an empty list or an error structure.
-                if (quotes && quotes.error) {
-                     quotesContainer.innerHTML = `<p>Error: ${quotes.error}</p>`;
-                }
-                return;
+            } else {
+                allQuotes = fetchedQuotes; // Store fetched quotes
+                renderQuotes(allQuotes); // Render all fetched quotes
             }
-
-            // Clear "Loading quotes..." message
-            quotesContainer.innerHTML = '';
-
-            quotes.forEach(quote => {
-                const quoteDiv = document.createElement('div');
-                quoteDiv.className = 'quote-item';
-
-                const quoteText = document.createElement('blockquote');
-                quoteText.className = 'quote-text';
-                quoteText.textContent = `“${quote.text}”`; // Add quotation marks
-
-                const quoteAuthor = document.createElement('p');
-                quoteAuthor.className = 'quote-author';
-                quoteAuthor.textContent = `— ${quote.author}`;
-
-                quoteDiv.appendChild(quoteText);
-                quoteDiv.appendChild(quoteAuthor);
-                quotesContainer.appendChild(quoteDiv);
-            });
 
         } catch (error) {
             console.error('Fetch error:', error);
+            allQuotes = []; // Reset allQuotes on error
             quotesContainer.innerHTML = `<p>Failed to load quotes. ${error.message}. Check console for more details.</p>`;
+        } finally {
+            if (refreshButton) {
+                refreshButton.disabled = false;
+                refreshButton.textContent = originalButtonText;
+            }
         }
     }
 
+    // Event listener for the refresh button
+    if (refreshButton) {
+        refreshButton.addEventListener('click', fetchQuotes);
+    }
+
+    // Event listener for the search input
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            if (searchTerm === '') {
+                renderQuotes(allQuotes); // If search is empty, show all quotes
+            } else {
+                const filteredQuotes = allQuotes.filter(quote =>
+                    quote.text.toLowerCase().includes(searchTerm) ||
+                    quote.author.toLowerCase().includes(searchTerm)
+                );
+                renderQuotes(filteredQuotes);
+            }
+        });
+    }
+
+    // Initial fetch of quotes when the page loads
     fetchQuotes();
 });

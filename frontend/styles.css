@@ -67,3 +67,55 @@ main {
     font-size: 1rem;
     color: #777;
 }
+
+#refresh-button {
+    display: block;
+    margin: 20px auto; /* Centered */
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff; /* Primary blue */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#refresh-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#refresh-button:disabled {
+    background-color: #ccc; /* Grey when disabled */
+    color: #666; /* Darker text for disabled state */
+    cursor: not-allowed;
+}
+
+#search-input {
+    display: block;
+    width: 60%; /* Relative width */
+    max-width: 400px; /* Max width to prevent it from becoming too large */
+    margin: 20px auto; /* Centered */
+    padding: 10px 15px; /* Adjusted padding */
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Important for width calculation with padding/border */
+}
+
+#search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    outline: none;
+}
+
+.quote-image {
+    display: block; /* Allows margin auto to work for centering */
+    max-width: 100%; /* Responsive, ensures it doesn't overflow container */
+    height: auto; /* Maintain aspect ratio */
+    margin: 0 auto 15px auto; /* Center block image, 15px margin below */
+    border-radius: 4px; /* Slightly rounded corners */
+    /* Optional: Add a subtle border or shadow if desired */
+    /* border: 1px solid #eee; */
+    /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+}

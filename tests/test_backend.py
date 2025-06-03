@@ -38,8 +38,11 @@ class TestApi(unittest.TestCase):
             self.assertIsInstance(first_quote, dict, "Each item in the list should be a dictionary")
             self.assertIn('text', first_quote, "Each quote dictionary should have a 'text' key")
             self.assertIn('author', first_quote, "Each quote dictionary should have an 'author' key")
+            self.assertIn('image_url', first_quote, "Each quote dictionary should have an 'image_url' key")
             self.assertIsInstance(first_quote['text'], str, "Quote text should be a string")
             self.assertIsInstance(first_quote['author'], str, "Quote author should be a string")
+            self.assertIsInstance(first_quote['image_url'], str, "Image URL should be a string")
+            self.assertTrue(first_quote['image_url'].startswith('http'), "Image URL should start with http or https")
 
     def test_scrape_quotes_function_format(self):
         """Test the scrape_quotes function directly for its output format."""
@@ -61,8 +64,11 @@ class TestApi(unittest.TestCase):
             self.assertIsInstance(item, dict, "Each item returned by scrape_quotes should be a dictionary")
             self.assertIn('text', item, "Each quote dictionary should have a 'text' key")
             self.assertIn('author', item, "Each quote dictionary should have an 'author' key")
+            self.assertIn('image_url', item, "Each quote dictionary should have an 'image_url' key")
             self.assertIsInstance(item['text'], str, "Quote text should be a string")
             self.assertIsInstance(item['author'], str, "Quote author should be a string")
+            self.assertIsInstance(item['image_url'], str, "Image URL should be a string")
+            self.assertTrue(item['image_url'].startswith('http'), "Image URL should start with http or https")
             self.assertTrue(item['text'], "Quote text should not be empty")
             self.assertTrue(item['author'], "Quote author should not be empty")
 
